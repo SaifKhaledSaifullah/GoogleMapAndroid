@@ -11,6 +11,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,7 +24,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class GetCurrentLocation extends AppCompatActivity {
-    private int COARSE_LOCATION_PERMISSION = 1;
+    private int FINE_LOCATION_PERMISSION = 1;
 
     @BindView(R.id.tv_loc)
     TextView tv_loc;
@@ -34,14 +35,17 @@ public class GetCurrentLocation extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_location);
         ButterKnife.bind(this);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(GetCurrentLocation.this,
+                    Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+
+            } else {
+                requestStoragePermission();
+            }
+        }
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
-        if (ContextCompat.checkSelfPermission(GetCurrentLocation.this,
-                Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
 
-        } else {
-            requestStoragePermission();
-        }
 
     }
 
@@ -60,7 +64,8 @@ public class GetCurrentLocation extends AppCompatActivity {
 
     private void requestStoragePermission() {
         if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                Manifest.permission.ACCESS_COARSE_LOCATION)) {
+                Manifest.permission.ACCESS_FINE_LOCATION)) {
+            Log.e("currentLoc","retionale");
 
             new AlertDialog.Builder(this)
                     .setTitle("Permission needed")
@@ -69,7 +74,7 @@ public class GetCurrentLocation extends AppCompatActivity {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             ActivityCompat.requestPermissions(GetCurrentLocation.this,
-                                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, COARSE_LOCATION_PERMISSION);
+                                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, FINE_LOCATION_PERMISSION);
                         }
                     })
                     .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
@@ -81,18 +86,19 @@ public class GetCurrentLocation extends AppCompatActivity {
                     .create().show();
 
         } else {
+            Log.e("currentLoc","permission needed");
             ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, COARSE_LOCATION_PERMISSION);
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, FINE_LOCATION_PERMISSION);
         }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == COARSE_LOCATION_PERMISSION) {
+        if (requestCode == FINE_LOCATION_PERMISSION) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "Permission GRANTED", Toast.LENGTH_SHORT).show();
+               // Toast.makeText(this, "Permission GRANTED", Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(this, "Permission DENIED", Toast.LENGTH_SHORT).show();
+               // Toast.makeText(this, "Permission DENIED", Toast.LENGTH_SHORT).show();
             }
         }
     }

@@ -19,7 +19,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         demoArrey = new String[]{"Simple Map With Marker"
                 , "Map With Draggable Marker"
-                , "Map With Sticky Marker", "Get My Current Location"};
+                , "Map With Sticky Marker", "Get My Current Location"
+                , "PollyLines and Pollygones"
+                , "Show Map With Current Location"};
         listView = findViewById(R.id.demoList);
         ArrayAdapter<String> demoAdapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1, android.R.id.text1, demoArrey);
@@ -37,9 +39,13 @@ public class MainActivity extends AppCompatActivity {
                     case 2:
                         startActivity(new Intent(MainActivity.this, MapWithStickyMarker.class));
                         break;
-                        case 3:
+                    case 3:
                         startActivity(new Intent(MainActivity.this, GetCurrentLocation.class));
                         break;
+                    case 4:
+                        startActivity(new Intent(MainActivity.this, PolyActivity.class));
+                    case 5:
+                        startActivity(new Intent(MainActivity.this, ShowMapOnCurrentLocationActivity.class));
                 }
             }
         });
